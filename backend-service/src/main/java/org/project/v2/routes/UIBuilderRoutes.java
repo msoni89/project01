@@ -14,6 +14,6 @@ public class UIBuilderRoutes {
 
     @Bean
     public RouterFunction<ServerResponse> uiBuilderRoutes(UISelectorHandler selectorHandler) {
-        return route(GET("/api/v1/ui-builder/selectors"), selectorHandler::all);
+        return route(GET("/api/v2/ui-builder/selectors"), selectorHandler::all);
     }
 }

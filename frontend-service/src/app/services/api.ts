@@ -49,7 +49,7 @@ export const api = createApi({
         }),
         updateUserPreferences: builder.mutation<void, UpdateRequest>({
             query: (request) => ({
-                url: `/api/v1/user-preferences/${request.id}`,
+                url: `/api/v1/user-preferences/id/${request.id}`,
                 method: 'PUT',
                 body: request.body,
             }),

@@ -74,7 +74,6 @@ public class UISelectorServiceTests {
 
         List<UISelectorDTO> selectorDTOList = selectorService.all();
 
-        System.out.println(selectorDTOList);
         assertEquals(1L, selectorDTOList.size());
         UISelectorDTO parentElement = selectorDTOList.get(0);
         assertEquals("Service", parentElement.getTitle());

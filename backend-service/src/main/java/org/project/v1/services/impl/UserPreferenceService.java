@@ -75,7 +75,6 @@ public class UserPreferenceService implements IUserPreferenceService {
         preference.setName(updateRequest.getName());
         preference.setUpdatedAt(Timestamp.from(Instant.now()));
         UserPreference savedResult = preferenceRepository.save(preference);
-        System.out.println(savedResult.getSelectors());
         return UserPreferenceResponse.builder()
                 .isTermAccepted(savedResult.getIsTermAccepted())
                 .name(savedResult.getName())

@@ -127,7 +127,6 @@ const EditForm = () => {
                         error={touched.name && Boolean(errors.name)}
                     />
 
-                    // Todo we can move it into seperate component
                     <TextField
                         multiline
                         fullWidth
