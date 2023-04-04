@@ -2,10 +2,12 @@ package org.project.v2.handlers;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
 import org.project.exceptions.NotFoundException;
+import org.project.exceptions.UserPreferenceAlreadyExist;
 import org.project.mapper.UISelectorMapper;
 import org.project.models.UserPreference;
 import org.project.repositories.UISelectorRepository;
@@ -24,6 +26,7 @@ import static org.springframework.web.servlet.function.ServerResponse.*;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class UserPreferenceHandler {
 
     private final UserPreferenceRepository preferenceRepository;
@@ -32,26 +35,38 @@ public class UserPreferenceHandler {
 
     @SneakyThrows
     public ServerResponse create(ServerRequest req) {
+
         var body = req.body(UserPreferenceCreateRequest.class);
+        log.info(String.format("Inside create method, Request received with body %s", body));
 
-        var selectors = new HashSet<>(selectorRepository.findAllById(
-                body.getSelectorIds()));
+        var preference = preferenceRepository.findByName(body.getName());
+        if (preference.isPresent()) {
+            log.error(String.format("User preference already exist with name %S", body.getName()));
+            throw new UserPreferenceAlreadyExist(String.format("User preference already exist with name %S", body.getName()));
+        }
 
+        var selectors = selectorRepository.findAllById(body.getSelectorIds());
         if (selectors.isEmpty()) {
+            log.error("Selectors does not exist with given ids");
             throw new NotFoundException("Selectors does not exist with given ids");
         }
 
-        var saved = this.preferenceRepository.save(UserPreference.builder()
-                .name(body.getName())
-                .selectors(selectors)
-                .isTermAccepted(body.getIsTermAccepted())
-                .createdAt(Timestamp.from(Instant.now())).updatedAt(Timestamp.from(Instant.now()))
-                .build());
-        return created(URI.create("/preferences/" + saved.getId())).body(saved);
+        var persistedObject = this.preferenceRepository.save(
+                UserPreference.builder()
+                        .name(body.getName())
+                        .selectors(new HashSet<>(selectors))
+                        .isTermAccepted(body.getIsTermAccepted())
+                        .createdAt(Timestamp.from(Instant.now())).updatedAt(Timestamp.from(Instant.now()))
+                        .build());
+
+        log.error(String.format("resource created with id %d", persistedObject.getId()));
+        return created(URI.create("/preferences/" + persistedObject.getId())).body(persistedObject);
     }
 
-    public ServerResponse get(ServerRequest req) {
-        return this.preferenceRepository.findById(Long.valueOf(req.pathVariable("id")))
+    public ServerResponse getById(ServerRequest req) {
+        Long pathId = Long.valueOf(req.pathVariable("id"));
+        log.info(String.format("Inside get method %d", pathId));
+        return this.preferenceRepository.findById(pathId)
                 .map(userPreference -> UserPreferenceResponse.builder().
                         id(userPreference.getId())
                         .name(userPreference.getName())
@@ -67,12 +82,18 @@ public class UserPreferenceHandler {
     @SneakyThrows
     public ServerResponse update(ServerRequest req) {
         var body = req.body(UserPreferenceUpdateRequest.class);
+        log.info(String.format("Inside update method, Request received with body %s", body));
+
+        var selectors = selectorRepository.findAllById(body.getSelectorIds());
+        if (selectors.isEmpty()) {
+            log.error("Selectors does not exist with given ids");
+            throw new NotFoundException("No Selectors found on given ids");
+        }
 
         return this.preferenceRepository.findById(Long.valueOf(req.pathVariable("id")))
                 .map(
                         userPreference -> {
-                            userPreference.setSelectors(
-                                    new HashSet<>(selectorRepository.findAllById(body.getSelectorIds())));
+                            userPreference.setSelectors(new HashSet<>(selectors));
                             userPreference.setName(body.getName());
                             userPreference.setUpdatedAt(Timestamp.from(Instant.now()));
                             userPreference.setCreatedAt(Timestamp.from(Instant.now()));

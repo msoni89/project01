@@ -23,6 +23,7 @@ public class UISelectorHandler {
     private UISelectorMapper mapper;
 
     public ServerResponse all(ServerRequest request) {
+        log.info("Inside all method");
         return ok().body(this.repository.findByIsParentTrueOrderByIdAsc().stream().map(this.mapper::convert).toList());
     }
 

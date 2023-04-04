@@ -1,6 +1,7 @@
 package org.project.v1.services.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserPreferenceService implements IUserPreferenceService {
 
     private final UserPreferenceRepository preferenceRepository;
@@ -32,25 +34,26 @@ public class UserPreferenceService implements IUserPreferenceService {
 
     @Override
     public UserPreferenceResponse create(UserPreferenceCreateRequest createRequest) {
+        log.info(String.format("Inside update method, Request received with body %s", createRequest));
         var preference = preferenceRepository.findByName(createRequest.getName());
-        if (preference.isPresent())
+        if (preference.isPresent()) {
+            log.error(String.format("User preference already exist with name %S", createRequest.getName()));
             throw new UserPreferenceAlreadyExist(String.format("User preference already exist with name %S", createRequest.getName()));
+        }
+
+
+        List<UISelector> selectors = selectorRepository.findAllById(new HashSet<>(createRequest.getSelectorIds()));
+        if (selectors.isEmpty()) {
+            log.error("Selectors does not exist with given ids");
+            throw new NotFoundException("No Selectors found on given ids");
+        }
 
         UserPreference userPreference = UserPreference.builder()
                 .name(createRequest.getName())
                 .createdAt(Timestamp.from(Instant.now()))
-                .isTermAccepted(createRequest.getIsTermAccepted()).selectors(createRequest.getSelectorIds().stream().map(id ->
-                                UISelector.builder().id(id).build()
-                        )
-                        .collect(Collectors.toSet()))
+                .isTermAccepted(createRequest.getIsTermAccepted()).selectors(new HashSet<>(selectors))
                 .updatedAt(Timestamp.from(Instant.now())).build();
-        List<UISelector> selectors = selectorRepository.findAllById(new HashSet<>(createRequest.getSelectorIds()));
-        if (selectors.isEmpty()) {
-            throw new NotFoundException("No Selectors found on given ids");
-        }
-        userPreference.setUpdatedAt(Timestamp.from(Instant.now()));
-        userPreference.setCreatedAt(Timestamp.from(Instant.now()));
-        userPreference.setSelectors(new HashSet<>(selectors));
+
         UserPreference createdUserPreference = preferenceRepository.save(userPreference);
         return UserPreferenceResponse.builder()
                 .name(createdUserPreference.getName())
@@ -63,11 +66,14 @@ public class UserPreferenceService implements IUserPreferenceService {
 
     @Override
     public UserPreferenceResponse update(Long id, UserPreferenceUpdateRequest updateRequest) {
+        log.info(String.format("Inside update method, Request received with body %s", updateRequest));
+
         UserPreference preference = preferenceRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format("User preference does not exist with id %d", id)));
 
-        List<UISelector> selectors = selectorRepository.findAllById(new HashSet<>(updateRequest.getSelectorIds()));
+        List<UISelector> selectors = selectorRepository.findAllById(updateRequest.getSelectorIds());
         if (selectors.isEmpty()) {
+            log.error("Selectors does not exist with given ids");
             throw new NotFoundException("No Selectors found on given ids");
         }
 
@@ -85,6 +91,7 @@ public class UserPreferenceService implements IUserPreferenceService {
 
     @Override
     public UserPreferenceResponse getById(Long id) {
+        log.info(String.format("Inside get method %d", id));
         UserPreference findResult = preferenceRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("User preference does not exist with id %d", id)));
         return UserPreferenceResponse.builder()

@@ -59,8 +59,6 @@ const EditForm = () => {
         return <div>No Record found</div>
     }
 
-    console.log(userPreferences);
-
     const {data, isLoading} = useGetUIBuilderSelectorsQuery()
     const [update, {isLoading: isUpdateLoading}] = useUpdateUserPreferencesMutation()
     const navigate = useNavigate()

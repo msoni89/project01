@@ -15,7 +15,7 @@ public class UserPreferRoutes {
     @Bean
     public RouterFunction<ServerResponse> userPreferenceRoutes(UserPreferenceHandler preferenceHandler) {
         return route(POST("/api/v2/user-preferences"), preferenceHandler::create)
-                .andRoute(GET("/api/v2/user-preferences/id/{id}"), preferenceHandler::get)
+                .andRoute(GET("/api/v2/user-preferences/id/{id}"), preferenceHandler::getById)
                 .andRoute(PUT("/api/v2/user-preferences/id/{id}"), preferenceHandler::update);
     }
 }
