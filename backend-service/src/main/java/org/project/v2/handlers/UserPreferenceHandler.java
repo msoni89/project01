@@ -47,7 +47,7 @@ public class UserPreferenceHandler {
                 .isTermAccepted(body.getIsTermAccepted())
                 .createdAt(Timestamp.from(Instant.now())).updatedAt(Timestamp.from(Instant.now()))
                 .build());
-        return created(URI.create("/preferences/" + saved.getId())).build();
+        return created(URI.create("/preferences/" + saved.getId())).body(saved);
     }
 
     public ServerResponse get(ServerRequest req) {
@@ -57,6 +57,7 @@ public class UserPreferenceHandler {
                         .name(userPreference.getName())
                         .createdAt(userPreference.getCreatedAt())
                         .updatedAt(userPreference.getUpdatedAt())
+                        .isTermAccepted(userPreference.getIsTermAccepted())
                         .selectors(userPreference.getSelectors().stream().map(selectorMapper::convert).collect(Collectors.toSet()))
                         .build())
                 .map(post -> ok().body(post))

@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/ui-builder")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @AllArgsConstructor
 public class UIBuilderController {
 

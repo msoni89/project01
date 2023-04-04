@@ -13,7 +13,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/api/v1/user-preferences")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @AllArgsConstructor
 public class UserPreferenceController {
 

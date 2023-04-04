@@ -3,7 +3,7 @@ package org.project.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.project.HelmesAppApplication;
+import org.project.ServiceApplication;
 import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-        classes = HelmesAppApplication.class)
+        classes = ServiceApplication.class)
 @AutoConfigureMockMvc
 @TestPropertySource(
         locations = "classpath:application.properties")
