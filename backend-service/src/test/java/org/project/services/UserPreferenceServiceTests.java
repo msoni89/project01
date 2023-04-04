@@ -11,7 +11,7 @@ import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
 import org.project.exceptions.NotFoundException;
-import org.project.exceptions.UserPreferenceAlreadyExist;
+import org.project.exceptions.AlreadyExistException;
 import org.project.mapper.UISelectorMapper;
 import org.project.models.UISelector;
 import org.project.models.UserPreference;
@@ -82,7 +82,7 @@ public class UserPreferenceServiceTests {
         selector.setId(1L);
         userPreference.setSelectors(Set.of(selector));
         when(userPreferenceRepository.findByName(Mockito.any())).thenReturn(Optional.of(userPreference));
-        assertThrows(UserPreferenceAlreadyExist.class, () -> {
+        assertThrows(AlreadyExistException.class, () -> {
             userPreferenceService.create(UserPreferenceCreateRequest.builder()
                     .isTermAccepted(userPreference.getIsTermAccepted())
                     .selectorIds(userPreference.getSelectors().stream().map(UISelector::getId).collect(Collectors.toSet())).build());

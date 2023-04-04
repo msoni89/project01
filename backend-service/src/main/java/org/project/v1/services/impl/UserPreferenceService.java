@@ -6,7 +6,7 @@ import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
 import org.project.exceptions.NotFoundException;
-import org.project.exceptions.UserPreferenceAlreadyExist;
+import org.project.exceptions.AlreadyExistException;
 import org.project.mapper.UISelectorMapper;
 import org.project.models.UISelector;
 import org.project.models.UserPreference;
@@ -38,7 +38,7 @@ public class UserPreferenceService implements IUserPreferenceService {
         var preference = preferenceRepository.findByName(createRequest.getName());
         if (preference.isPresent()) {
             log.error(String.format("User preference already exist with name %S", createRequest.getName()));
-            throw new UserPreferenceAlreadyExist(String.format("User preference already exist with name %S", createRequest.getName()));
+            throw new AlreadyExistException(String.format("User preference already exist with name %S", createRequest.getName()));
         }
 
 

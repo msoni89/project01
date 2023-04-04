@@ -7,7 +7,7 @@ import org.project.dtos.UserPreferenceCreateRequest;
 import org.project.dtos.UserPreferenceResponse;
 import org.project.dtos.UserPreferenceUpdateRequest;
 import org.project.exceptions.NotFoundException;
-import org.project.exceptions.UserPreferenceAlreadyExist;
+import org.project.exceptions.AlreadyExistException;
 import org.project.mapper.UISelectorMapper;
 import org.project.models.UserPreference;
 import org.project.repositories.UISelectorRepository;
@@ -42,7 +42,7 @@ public class UserPreferenceHandler {
         var preference = preferenceRepository.findByName(body.getName());
         if (preference.isPresent()) {
             log.error(String.format("User preference already exist with name %S", body.getName()));
-            throw new UserPreferenceAlreadyExist(String.format("User preference already exist with name %S", body.getName()));
+            throw new AlreadyExistException(String.format("User preference already exist with name %S", body.getName()));
         }
 
         var selectors = selectorRepository.findAllById(body.getSelectorIds());
