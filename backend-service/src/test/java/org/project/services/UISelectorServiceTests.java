@@ -13,7 +13,10 @@ import org.project.repositories.UISelectorRepository;
 import org.project.v1.services.impl.UISelectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;

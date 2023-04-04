@@ -3,7 +3,6 @@ package org.project.v1.controllers;
 import lombok.AllArgsConstructor;
 import org.project.dtos.UISelectorDTO;
 import org.project.v1.services.IUISelectorService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
