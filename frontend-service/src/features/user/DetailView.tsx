@@ -4,7 +4,7 @@ import {useGetUserPreferencesByIdQuery} from "../../app/services/api";
 import MenuItem from "@mui/material/MenuItem";
 import {generateOptionWithSpace} from "../utils";
 
-export const ConfirmationView = () => {
+export const DetailView = () => {
     let {id} = useParams();
 
     const navigate = useNavigate()
@@ -58,4 +58,4 @@ export const ConfirmationView = () => {
     </Container>
 }
 
-export default ConfirmationView;
+export default DetailView;

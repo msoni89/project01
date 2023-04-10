@@ -18,7 +18,7 @@ export interface UserPreferenceResponse {
 export interface CreateRequest {
     readonly name: String
     readonly  isTermAccepted: boolean
-    readonly selectorIds: string[]
+    readonly selectorIds: number[]
 }
 
 

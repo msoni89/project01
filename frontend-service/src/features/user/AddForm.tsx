@@ -14,30 +14,18 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {useCreateUserPreferencesMutation, useGetUIBuilderSelectorsQuery} from "../../app/services/api";
-import MenuItem from "@mui/material/MenuItem";
+import {useCreateUserPreferencesMutation} from "../../app/services/api";
 import {setUserPreferences} from "./userSlice";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import {generateOptionWithSpace} from "../utils";
+import SelectorComponent from "../components/SelectorComponent";
 
 interface FormValues {
     name: string;
     isTermAccepted: boolean;
-    selectorIds: string[]
+    selectorIds: number[]
 }
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 5;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
 
 const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -49,7 +37,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddForm = () => {
-    const {data, isLoading} = useGetUIBuilderSelectorsQuery()
     const [create,] = useCreateUserPreferencesMutation()
 
     const dispatch = useDispatch()
@@ -111,39 +98,10 @@ const AddForm = () => {
                         helperText={touched.name ? errors.name : ""}
                         error={touched.name && Boolean(errors.name)}
                     />
-                    <TextField
-                        multiline
-                        fullWidth
-                        select
-                        helperText={touched.selectorIds ? errors.selectorIds : ""}
-                        error={touched.selectorIds && Boolean(errors.selectorIds)}
-                        label="Selectors"
-                        name={"Selectors"}
-                        value={values.selectorIds}
-                        // @ts-ignore
-                        SelectProps={{
-                            style: {textOverflow: "chip", whiteSpace: "break-spaces"},
-                            multiple: true,
-                            MenuProps: MenuProps,
-                            onChange: handleChangeSelect
-                        }}
-                    >
-                        {
-                            isLoading ? <MenuItem>
-                                Loading...
-                            </MenuItem> : data && data.map((selector) => {
-                                return [
-                                    <MenuItem
-                                        key={selector.id}
-                                        value={selector.id}
-                                    >
-                                        {selector.title}
-                                    </MenuItem>,
-                                    selector.selectors.length && generateOptionWithSpace(selector, 1)
-                                ]
-                            })
-                        }
-                    </TextField>
+                    <SelectorComponent selectorIds={values.selectorIds} isTouched={!!touched.selectorIds}
+                                       hasError={Boolean(errors.selectorIds)}
+                                       errorMessage={touched.selectorIds ? errors.selectorIds : ""}
+                                       handleChange={handleChangeSelect} />
                     <FormControlLabel
                         control={
                             <Box>
@@ -158,7 +116,6 @@ const AddForm = () => {
                         }
                         label="Agree to terms"
                     />
-
                     <Button
                         variant="contained"
                         type="submit"
