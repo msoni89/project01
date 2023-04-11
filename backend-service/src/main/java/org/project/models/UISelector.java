@@ -25,11 +25,6 @@ public class UISelector {
 
     private Boolean isParent;
 
-
-    @ManyToOne
-    @JoinColumn(name = "university_id")
-    private UserPreference university;
-
     @OneToMany
     @JoinColumn(name = "parent_selector_id", referencedColumnName = "id")
     private Set<UISelector> selectors = new HashSet<>();
